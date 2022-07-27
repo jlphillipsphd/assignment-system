@@ -1,2 +1,59 @@
-# assignment-system
+# JHub Assignment-System
+
 A simple assignment system for Apache/PHP that couples with JupyterHub/Lab
+
+## Development Deployment Tutorial
+
+You will need to consider security and storage concerns on production deployments which are outside of the scope of this repo. You will need to have a linux system with both `k3d` and `helm` installed before you begin. Also, while JHub will be deployed using k8s/z2jh below, you can choose either docker or k8s to deploy the assignment system. Just make sure you follow the appropriate commands below based on your choice.
+
+### Step 1 - Preliminaries: set up the k8s cluster
+```
+k3d cluster create
+```
+
+### Step 2 - Install JHub (z2jh)
+```
+# First, create a namespace for your JHub
+kubectl create namespace jupyterhub
+
+# If you want to use K8S, then install JHub as follows:
+helm upgrade --install --namespace jupyterhub jupyterhub jupyterhub/jupyterhub --values jhub-values-k8s.yaml
+
+# If you want to use docker, then install JHub as follows:
+helm upgrade --install --namespace jupyterhub jupyterhub jupyterhub/jupyterhub --values jhub-values-docker.yaml
+```
+
+### Step 3 - Route FQDN to JHub using Traefik
+```
+# First, you need to get the IP of your
+# traefik load balancer:
+kubectl -n kube-system get svc
+
+# Copy the EXTERNAL-IP of the traefik service
+# that is listed. Here is what I see for example:
+NAME             TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
+kube-dns         ClusterIP      10.43.0.10     <none>         53/UDP,53/TCP,9153/TCP       14m
+metrics-server   ClusterIP      10.43.120.77   <none>         443/TCP                      14m
+traefik          LoadBalancer   10.43.94.148   192.168.96.2   80:32234/TCP,443:31814/TCP   14m
+
+# Modify your /etc/hosts to contain an entry for that
+# IP address. I used the FQDN 'k3d.local':
+192.168.96.2    k3d.local
+
+# Verify that traefik is accessible by opening
+# your browser and visiting http://k3d.local/
+404 Not Found
+
+# NOTE - if you didn't get a 404, but instead it
+# timed-out or some other error, then you don't
+# have k3d configured correctly or your /etc/hosts
+# is incorrect, etc. Try restarting k3d and/or
+# editing your /etc/hosts.
+
+# Deploy ingress route for JHub
+kubectl -n jupyterhub apply -f jhub-ingress.yaml
+
+# Open or reload http://k3d.local/ and you should
+# now be directed to your JHub login page.
+# You can log in and then visit the hub control panel.
+```
