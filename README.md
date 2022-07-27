@@ -2,6 +2,8 @@
 
 A simple assignment system for Apache/PHP that couples with JupyterHub/Lab
 
+Copyright &copy; 2022 Middle Tennessee State University - see LICENSE.
+
 ## Development Deployment Tutorial
 
 You will need to consider security and storage concerns on production deployments which are outside of the scope of this repo. You will need to have a linux system with both `k3d` and `helm` installed before you begin. Also, while JHub will be deployed using k8s/z2jh below, you can choose either docker or k8s to deploy the assignment system. Just make sure you follow the appropriate commands below based on your choice.
