@@ -1,0 +1,247 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web
+data:
+  alias.conf: |
+    <IfModule alias_module>
+            # Aliases: Add here as many aliases as you need (with no limit). The format is
+            # Alias fakename realname
+            #
+            # Note that if you include a trailing / on fakename then the server will
+            # require it to be present in the URL.  So "/icons" isn't aliased in this
+            # example, only "/icons/".  If the fakename is slash-terminated, then the
+            # realname must also be slash terminated, and if the fakename omits the
+            # trailing slash, the realname must also omit it.
+            #
+            # We include the /icons/ alias for FancyIndexed directory listings.  If
+            # you do not use FancyIndexing, you may comment this out.
+
+            Alias /icons/ "/usr/share/apache2/icons/"
+            Alias "/${JHUB_BASE_URL}services/${JHUB_SERVICE_NAME}" "/var/www/html"
+
+            <Directory "/usr/share/apache2/icons">
+                    Options FollowSymlinks
+                    AllowOverride None
+                    Require all granted
+            </Directory>
+
+    </IfModule>
+
+    # vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+  php.ini: |
+    [PHP]
+    engine = On
+    short_open_tag = Off
+    precision = 14
+    output_buffering = 4096
+    zlib.output_compression = Off
+    implicit_flush = Off
+    unserialize_callback_func =
+    serialize_precision = -1
+    disable_functions =
+    disable_classes =
+    zend.enable_gc = On
+    zend.exception_ignore_args = Off
+    expose_php = On
+    max_execution_time = 120
+    max_input_time = 60
+    memory_limit = 128M
+    error_reporting = E_ALL
+    display_errors = On
+    display_startup_errors = On
+    log_errors = On
+    log_errors_max_len = 1024
+    ignore_repeated_errors = Off
+    ignore_repeated_source = Off
+    report_memleaks = On
+    variables_order = "GPCS"
+    request_order = "GP"
+    register_argc_argv = Off
+    auto_globals_jit = On
+    post_max_size = 128M
+    auto_prepend_file =
+    auto_append_file =
+    default_mimetype = "text/html"
+    default_charset = "UTF-8"
+    doc_root =
+    user_dir =
+    enable_dl = Off
+    file_uploads = On
+    upload_max_filesize = 128M
+    max_file_uploads = 20
+    allow_url_fopen = On
+    allow_url_include = Off
+    default_socket_timeout = 60
+    [CLI Server]
+    cli_server.color = On
+    [Date]
+    [filter]
+    [iconv]
+    [imap]
+    [intl]
+    [sqlite3]
+    [Pcre]
+    [Pdo]
+    [Pdo_mysql]
+    pdo_mysql.default_socket=
+    [Phar]
+    [mail function]
+    SMTP = localhost
+    smtp_port = 25
+    mail.add_x_header = Off
+    [ODBC]
+    odbc.allow_persistent = On
+    odbc.check_persistent = On
+    odbc.max_persistent = -1
+    odbc.max_links = -1
+    odbc.defaultlrl = 4096
+    odbc.defaultbinmode = 1
+    [MySQLi]
+    mysqli.max_persistent = -1
+    mysqli.allow_persistent = On
+    mysqli.max_links = -1
+    mysqli.default_port = 3306
+    mysqli.default_socket =
+    mysqli.default_host =
+    mysqli.default_user =
+    mysqli.default_pw =
+    mysqli.reconnect = Off
+    [mysqlnd]
+    mysqlnd.collect_statistics = On
+    mysqlnd.collect_memory_statistics = On
+    [OCI8]
+    [PostgreSQL]
+    pgsql.allow_persistent = On
+    pgsql.auto_reset_persistent = Off
+    pgsql.max_persistent = -1
+    pgsql.max_links = -1
+    pgsql.ignore_notice = 0
+    pgsql.log_notice = 0
+    [bcmath]
+    bcmath.scale = 0
+    [browscap]
+    [Session]
+    session.save_handler = files
+    session.use_strict_mode = 0
+    session.use_cookies = 1
+    session.use_only_cookies = 1
+    session.name = PHPSESSID
+    session.auto_start = 0
+    session.cookie_lifetime = 0
+    session.cookie_path = /
+    session.cookie_domain =
+    session.cookie_httponly =
+    session.cookie_samesite =
+    session.serialize_handler = php
+    session.gc_probability = 1
+    session.gc_divisor = 1000
+    session.gc_maxlifetime = 1440
+    session.referer_check =
+    session.cache_limiter = nocache
+    session.cache_expire = 180
+    session.use_trans_sid = 0
+    session.sid_length = 26
+    session.trans_sid_tags = "a=href,area=href,frame=src,form="
+    session.sid_bits_per_character = 5
+    [Assertion]
+    zend.assertions = 1
+    [COM]
+    [mbstring]
+    [gd]
+    [exif]
+    [Tidy]
+    tidy.clean_output = Off
+    [soap]
+    soap.wsdl_cache_enabled=1
+    soap.wsdl_cache_dir="/tmp"
+    soap.wsdl_cache_ttl=86400
+    soap.wsdl_cache_limit = 5
+    [sysvshm]
+    [ldap]
+    ldap.max_links = -1
+    [dba]
+    [opcache]
+    [curl]
+    [openssl]
+    [ffi]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  selector:
+    app: web
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      # affinity:
+      #   podAntiAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       - labelSelector:
+      #           matchExpressions:
+      #             - key: app
+      #               operator: In
+      #               values:
+      #                 - web
+      #         topologyKey: "kubernetes.io/hostname"
+      volumes:
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: storage
+        - name: web-config
+          configMap:
+            name: web
+      containers:
+        - name: assignments
+          image: jlphillips/jhub-assignment-system:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: storage-volume
+              mountPath: /var/www/storage
+            - name: web-config
+              mountPath: /etc/apache2/mods-enabled/alias.conf
+              subPath: alias.conf
+            - name: web-config
+              mountPath: /usr/local/etc/php/php.ini
+              subPath: php.ini
+          env:
+            - name: TZ
+              value: "America/Chicago"
+            - name: JHUB_SERVER_URL
+              value: "http://k3d.local/"
+            - name: JHUB_INTERNAL_URL
+              value: "http://proxy-public.jupyterhub.svc.cluster.local/"
+            - name: JHUB_BASE_URL
+              value: "jupyterhub/"
+            - name: JHUB_SERVICE_NAME
+              value: "cscixxxx-assignments"
+            - name: JHUB_SERVICE_TOKEN
+              value: "7d9b94f7e7bab85e2b8fcb7c66bb20e74d009630f4be1ff1ec2f87865550357a"
+            - name: COURSE_NUMBER
+              value: "CSCI XXXX"
+            - name: COURSE_NAME
+              value: "Course Name"
+            - name: COURSE_ADMINS
+              value: "jphillips"
+          ports:
+            - containerPort: 80

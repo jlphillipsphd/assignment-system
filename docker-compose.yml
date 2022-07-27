@@ -1,0 +1,26 @@
+version: "3.1"
+services:
+  web:
+    build: .
+    volumes:
+      - ./alias.conf:/etc/apache2/mods-enabled/alias.conf
+      - ./php.ini:/usr/local/etc/php/php.ini
+      - storage:/var/www/storage
+    ports:
+      - "9000:80"
+    environment:
+      JHUB_SERVER_URL: "http://k3d.local/"
+      JHUB_INTERNAL_URL: "http://k3d.local/"
+      JHUB_BASE_URL: "jupyterhub/"
+      JHUB_SERVICE_NAME: "cscixxxx-assignments"
+      JHUB_SERVICE_TOKEN: "7d9b94f7e7bab85e2b8fcb7c66bb20e74d009630f4be1ff1ec2f87865550357a"
+      COURSE_NUMBER: "CSCI XXXX"
+      COURSE_NAME: "Course Name"
+      COURSE_ADMINS: "jphillips"
+volumes:
+  storage:
+
+networks:
+  default:
+    name: k3d-k3s-default
+    external: true

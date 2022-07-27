@@ -1,0 +1,9 @@
+hub:
+  baseUrl: "jupyterhub/"
+  services:
+    cscixxxx-assignments:
+      apiToken: "7d9b94f7e7bab85e2b8fcb7c66bb20e74d009630f4be1ff1ec2f87865550357a"
+      url: http://host.k3d.internal:9000
+  config:
+    Authenticator:
+      enable_auth_state: True
