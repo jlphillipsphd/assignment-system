@@ -9,7 +9,7 @@ if (!isset($_COOKIE[$cookie_name])) {
     $string = '<script type="text/javascript">';
     $string .= 'window.location = "' . $login_url . '"';
     $string .= '</script>';
-    echo "Need to log in first... will redirect in the future.\n";
+    echo $string;
 }
 else {
     $url = $internal_hub_url . "api/authorizations/cookie/" .  $cookie_name . "/" . str_replace('"', "", $_COOKIE[$cookie_name]);
