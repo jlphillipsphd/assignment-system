@@ -38,9 +38,9 @@ $output_header = <<<EOF
     <main role="main">
       <div class="jumbotron">
 	<div class="container text-center">	  
-	  <h1><?php echo $course_number; ?></h1>
-	  <h2><?php echo $course_name; ?></h2>
-	  <h4>Assignment Submission System</h4>
+	  <h1>$course_number</h1>
+	  <h2>$course_name</h2>
+	  <h3>Assignment Submission System</h3>
 	</div>
       </div>
       <div class="container" id="content">
@@ -208,8 +208,9 @@ else if (isset($_POST["download"])) {
     echo $output_footer;
 }
 else if (isset($_POST["feedback"])) {
-    $file = trim(shell_exec("ls ../storage/$split_line[0]/". strtolower($user_name) . "*-returned.pdf | tail -1"));
-    if (file_exists($file)) {
+    $file = shell_exec("ls ../storage/$split_line[0]/". strtolower($user_name) . "*-returned.pdf | tail -1");
+    if (!is_null($file) && file_exists(trim($file))) {
+	$file = trim($file);
 	header('Content-Description: File Transfer');
 	header('Content-Type: application/x-pdf');
 	header('Content-Disposition: attachment; filename='.basename($file));
