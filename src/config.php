@@ -15,7 +15,7 @@ $course_admins = explode(':',getenv('COURSE_ADMINS'));
 $cookie_name = "jupyterhub-services";
 $external_hub_url = $server_url . $base_url . "hub/";
 $internal_hub_url = $internal_url . $base_url . "hub/";
-$logout_url = $external_hub_url . "logout";
+$logout_url = $external_hub_url . "home";
 $login_url = $external_hub_url . "login?next=%2F" .
 	     str_replace('/','%2F', $base_url) .
 	     "services%2F" . $service_name;
