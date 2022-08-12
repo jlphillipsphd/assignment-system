@@ -4,6 +4,15 @@ kind: ConfigMap
 metadata:
   name: web
 data:
+  000-default.conf: |
+    RewriteEngine On
+    RewriteCond %{HTTP_COOKIE} !jupyterhub-session-id
+    RewriteRule ^/(.*)$ ${JHUB_SERVER_URL}${JHUB_BASE_URL}hub/login?next=$1 [R,NC,L]
+    <Directory '/var/www/html'>
+      AllowOverride All
+    </Directory>
+  rewrite.load: |
+    LoadModule rewrite_module /usr/lib/apache2/modules/mod_rewrite.so
   alias.conf: |
     <IfModule alias_module>
             # Aliases: Add here as many aliases as you need (with no limit). The format is
@@ -221,6 +230,12 @@ spec:
             - name: web-config
               mountPath: /etc/apache2/mods-enabled/alias.conf
               subPath: alias.conf
+            - name: web-config
+              mountPath: /etc/apache2/sites-enabled/000-default.conf
+              subPath: 000-default.conf
+            - name: web-config
+              mountPath: /etc/apache2/mods-enabled/rewrite.load
+              subPath: rewrite.load
             - name: web-config
               mountPath: /usr/local/etc/php/php.ini
               subPath: php.ini
