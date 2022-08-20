@@ -24,6 +24,18 @@ else {
     $result = json_decode(curl_exec($ch));
     if (!is_null($result) && property_exists($result,'name')) {
 	$user_name = $result->{'name'};
+	if (file_exists('../storage/whitelist')) {
+	   $file = fopen('../storage/whitelist','r');
+           $potential_user_name = $user_name;
+	   $user_name = null;
+	   while (!feof($file)) {
+	       $line = trim(fgets($file, 1024));
+	       if ($line == $potential_user_name) {
+		   $user_name = $potential_user_name;
+		   break;
+	       }
+	   }
+	}
     }
     else {
 	$user_name = null;
