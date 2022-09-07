@@ -35,6 +35,7 @@ else {
 		   break;
 	       }
 	   }
+           fclose($file);
 	}
     }
     else {
