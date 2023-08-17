@@ -48,7 +48,7 @@ if (file_exists('../storage/whitelist')) {
 }
 
 if (!$user_name)
-    exit("Forbidden");
+    exit("Forbidden - contact course instructor for access");
 
 function getAuthorizationCode() {
     global $authorize_url, $client_id, $callback_uri;
