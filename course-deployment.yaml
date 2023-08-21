@@ -5,9 +5,6 @@ metadata:
   name: web
 data:
   000-default.conf: |
-    RewriteEngine On
-    RewriteCond %{HTTP_COOKIE} !jupyterhub-session-id
-    RewriteRule ^/(.*)$ ${JHUB_SERVER_URL}${JHUB_BASE_URL}hub/login?next=$1 [R,NC,L]
     <Directory '/var/www/html'>
       AllowOverride All
     </Directory>
