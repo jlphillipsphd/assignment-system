@@ -2,7 +2,7 @@
 require_once 'auth.php';
 
 if (isset($_POST["logout"])) {
-    header("Location: $logout_url");
+    header("Location: " . $server_url . $base_url . "hub/home");
     exit();
 }
 

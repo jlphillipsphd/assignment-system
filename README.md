@@ -29,7 +29,7 @@ helm upgrade --install --namespace jupyterhub jupyterhub jupyterhub/jupyterhub -
 ```
 
 ### Step 3 - Route FQDN to JHub using Traefik
-First, you need to get the IP of yourctraefik load balancer:
+First, you need to get the IP of your traefik load balancer:
 ```
 kubectl -n kube-system get svc
 ```

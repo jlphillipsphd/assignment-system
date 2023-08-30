@@ -2,8 +2,13 @@ hub:
   baseUrl: "jupyterhub/"
   services:
     cscixxxx-assignments:
-      apiToken: "7d9b94f7e7bab85e2b8fcb7c66bb20e74d009630f4be1ff1ec2f87865550357a"
       url: http://web.cscixxxx-assignments.svc.cluster.local
+      api_token: "7d9b94f7e7bab85e2b8fcb7c66bb20e74d009630f4be1ff1ec2f87865550357a"
+      oauth_redirect_uri: http://k3d.local/jupyterhub/services/cscixxxx-assignments/auth.php
+      oauth_no_confirm: True
   config:
     Authenticator:
       enable_auth_state: True
+  loadRoles:
+    user:
+      scopes: ["access:services", "self"]

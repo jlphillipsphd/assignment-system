@@ -220,7 +220,7 @@ spec:
       containers:
         - name: assignments
           image: jlphillips/jhub-assignment-system:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           volumeMounts:
             - name: storage-volume
               mountPath: /var/www/storage
