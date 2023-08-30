@@ -24,8 +24,12 @@ if (isset($_COOKIE[$oauth_cookie_name])) {
 if (!$user_name) {
     if ($_GET["code"]) {
 	$access_token = getAccessToken($_GET["code"]);
+	if (isset($_GET["dest"]))
+	    $destination = $_GET["dest"];
+	else
+	    $destination = $service_url;
 	setcookie($oauth_cookie_name, $access_token,0,"","",false,true);
-	header('Location: ' . $service_url);
+	header('Location: ' . $destination);
 	die();
     } else {
 	getAuthorizationCode();
