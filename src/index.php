@@ -1,6 +1,7 @@
 <!doctype html>
 <?php
 require_once 'auth.php';
+date_default_timezone_set(getenv("TZ"));
 ?>
 <html lang="en">
   <head>
